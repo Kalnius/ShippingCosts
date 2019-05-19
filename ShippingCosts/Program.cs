@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -8,11 +10,24 @@ namespace ShippingCosts
     {
         static void Main(string[] args)
         {
-            var transactions = File.ReadAllLines("input.txt")
-                .Select(row => new Transaction(row.Split(' ')));
+            var discountService = new DiscountService();
+            var file = File.ReadAllLines("input.txt");
 
-            foreach (var transaction in transactions)
-                Console.WriteLine($"{transaction.Date.ToString("yyyy-MM-dd")} {transaction.PackageSize} {transaction.CarrierCode} {transaction.Valid}");
+            var discountedTransactions = discountService.ApplyDiscounts(file.Select(line => new Transaction(line)));
+            var zippedData = file.Zip(discountedTransactions, (line, discount) => (line,discount));
+
+            foreach ((var line, var transaction) in zippedData)
+            {
+                if (transaction.IsValid())
+                {
+                    var updatedPrice = (CarrierData.GetPrice(transaction) - transaction.Discount).ToString("#,##0.00");
+                    var discount = transaction.Discount > 0 ? transaction.Discount.ToString("#,##0.00") : "-";
+
+                    Console.WriteLine($"{line} {updatedPrice} {discount}");
+                }
+                else Console.WriteLine($"{line} Ignored");
+            }
+            
             Console.ReadKey();
         }
     }
