@@ -24,7 +24,7 @@ namespace ShippingCosts
             {
                 { CarrierCode.LP, LPPricing },
                 { CarrierCode.MR, MRPricing },
-                //{ CarrierCode.UNKNOWN, TestPricing }
+                //{ CarrierCode.TEST, TestPricing }
             };
         }
 

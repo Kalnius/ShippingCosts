@@ -27,8 +27,6 @@ namespace ShippingCosts
                 }
                 else Console.WriteLine($"{line} Ignored");
             }
-            
-            Console.ReadKey();
         }
     }
 }
