@@ -2,7 +2,7 @@
 {
     public enum PackageSize
     {
-        UNKNOWN,
+        None,
         S,
         M,
         L
@@ -10,7 +10,7 @@
 
     public enum CarrierCode
     {
-        UNKNOWN,
+        None,
         LP,
         MR,
         //TEST

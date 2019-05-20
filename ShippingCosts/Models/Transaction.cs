@@ -8,7 +8,16 @@ namespace ShippingCosts
         public PackageSize PackageSize { get; set; }
         public CarrierCode CarrierCode { get; set; }
 
+        public decimal Price { get; set; } = 0.0m;
         public decimal Discount { get; set; } = 0.0m;
+
+        public Transaction(CarrierCode carrierCode, PackageSize packageSize, DateTime date)
+        {
+            CarrierCode = carrierCode;
+            PackageSize = packageSize;
+            Date = date;
+            Price = CarrierData.GetPrice(carrierCode, packageSize);
+        }
 
         public Transaction(string row)
         {
@@ -23,14 +32,15 @@ namespace ShippingCosts
                 Date = date;
                 PackageSize = size;
                 CarrierCode = code;
+                Price = CarrierData.GetPrice(code, size);
             }
         }
 
         public bool IsValid()
         {
             return Date != DateTime.MinValue &&
-                PackageSize != PackageSize.UNKNOWN &&
-                CarrierCode != CarrierCode.UNKNOWN;
+                PackageSize != PackageSize.None &&
+                CarrierCode != CarrierCode.None;
         }
     }
 }

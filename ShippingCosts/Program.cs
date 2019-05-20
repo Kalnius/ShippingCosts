@@ -20,7 +20,7 @@ namespace ShippingCosts
             {
                 if (transaction.IsValid())
                 {
-                    var updatedPrice = (CarrierData.GetPrice(transaction) - transaction.Discount).ToString("#,##0.00");
+                    var updatedPrice = (transaction.Price - transaction.Discount).ToString("#,##0.00");
                     var discount = transaction.Discount > 0 ? transaction.Discount.ToString("#,##0.00") : "-";
 
                     Console.WriteLine($"{line} {updatedPrice} {discount}");

@@ -29,7 +29,7 @@ namespace ShippingCosts
         }
 
         /// <summary>
-        /// Gets the price of the transaction based on package size and carrier
+        /// Gets the price of the transaction based on transaction
         /// </summary>
         /// <returns>Price of the package to be sent via specified carrier</returns>
         /// <param name="transaction">Transaction to get the price for</param>
@@ -38,7 +38,16 @@ namespace ShippingCosts
             return CarrierPricing[transaction.CarrierCode][transaction.PackageSize];
         }
 
-
+        /// <summary>
+        /// Gets the price of the transaction based on package size and carrier
+        /// </summary>
+        /// <returns>Price of the specified package size to be sent via specified carrier</returns>
+        /// <param name="carrierCode">Valid carrier code</param>
+        /// <param name="packageSize">Valid package size</param>
+        public static decimal GetPrice(CarrierCode carrierCode, PackageSize packageSize)
+        {
+            return CarrierPricing[carrierCode][packageSize];
+        }
 
         /// <summary>
         /// Retrieves the lowest price of a <see cref="PackageSize"/> package of all the carriers
