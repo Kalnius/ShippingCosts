@@ -10,13 +10,13 @@ namespace ShippingCosts
     {
         static void Main(string[] args)
         {
-            var discountService = new DiscountService();
             var file = File.ReadAllLines("input.txt");
+            var transactions = file.Select(line => new Transaction(line)).ToArray();
 
-            var discountedTransactions = discountService.ApplyDiscounts(file.Select(line => new Transaction(line)));
-            var zippedData = file.Zip(discountedTransactions, (line, discount) => (line,discount));
+            new DiscountService().ApplyDiscounts(transactions);
 
-            foreach ((var line, var transaction) in zippedData)
+            //zipping here only to be able to simultaneously iterate over both the line from input.txt and the transaction
+            foreach ((var line, var transaction) in file.Zip(transactions, (line, transaction) => (line, transaction)))
             {
                 if (transaction.IsValid())
                 {

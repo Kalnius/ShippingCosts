@@ -14,14 +14,18 @@ namespace ShippingCosts
         /// </summary>
         /// <returns>Collection of discounts</returns>
         /// <param name="transactions">Transactions to calculate the discount amounts for</param>
-        public IEnumerable<Transaction> ApplyDiscounts(IEnumerable<Transaction> transactions)
+        public void ApplyDiscounts(Transaction[] transactions)
         {
-            foreach (var group in transactions.GroupBy(transaction => transaction.Date.Month))
+            var monthGroups = transactions
+                .Where(t => t.IsValid())
+                .GroupBy(transaction => transaction.Date.Month);
+
+            foreach (var group in monthGroups)
             {
                 ResetLimits();
                 foreach (var transaction in group)
                 {
-                    yield return ApplyDiscount(transaction);
+                    ApplyDiscount(transaction);
                 }
             }
         }
@@ -31,7 +35,7 @@ namespace ShippingCosts
         /// </summary>
         /// <returns>Discount amount</returns>
         /// <param name="transaction">Transaction to calculate the discount amount for</param>
-        public Transaction ApplyDiscount(Transaction transaction)
+        public void ApplyDiscount(Transaction transaction)
         {
             switch (transaction.PackageSize)
             {
@@ -39,26 +43,27 @@ namespace ShippingCosts
                     transaction.Discount = CarrierData.GetPrice(transaction) - CarrierData.GetLowestPrice(transaction.PackageSize);
                     break;
                 case PackageSize.L:
+                    //please note that LargePackageCount++ happens after the conditional check
                     if (transaction.CarrierCode == CarrierCode.LP && LargePackageCount++ == 2)
                         transaction.Discount = CarrierData.GetPrice(transaction);
                     break;
             }
 
-            return ApplyDiscountLimit(transaction);
+            DeductFromDiscountBalance(transaction);
         }
 
-        private Transaction ApplyDiscountLimit(Transaction transaction)
+        private void DeductFromDiscountBalance(Transaction transaction)
         {
-            if (EmptyingDiscountBalance(transaction))
+            if (DiscountBalanceSpent(transaction))
             {
                 transaction.Discount = DiscountBalance;
             }
 
+            //deduct the discount from discount balance
             DiscountBalance -= transaction.Discount;
-            return transaction;
         }
 
-        private bool EmptyingDiscountBalance(Transaction transaction)
+        private bool DiscountBalanceSpent(Transaction transaction)
         {
             return DiscountBalance - transaction.Discount <= 0;
         }

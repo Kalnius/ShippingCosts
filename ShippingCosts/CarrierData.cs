@@ -17,7 +17,7 @@ namespace ShippingCosts
                 { PackageSize.S, 2m }, { PackageSize.M, 3m }, { PackageSize.L, 4m }
             };
             //var TestPricing = new Dictionary<PackageSize, decimal>() {
-            //    { PackageSize.M, 3m }, { PackageSize.L, 4m }
+            //    { PackageSize.S, 0.5m }, { PackageSize.M, 3m }, { PackageSize.L, 4m }
             //};
 
             return new Dictionary<CarrierCode, Dictionary<PackageSize, decimal>>()
@@ -28,6 +28,11 @@ namespace ShippingCosts
             };
         }
 
+        /// <summary>
+        /// Gets the price of the transaction based on package size and carrier
+        /// </summary>
+        /// <returns>Price of the package to be sent via specified carrier</returns>
+        /// <param name="transaction">Transaction to get the price for</param>
         public static decimal GetPrice(Transaction transaction)
         {
             return CarrierPricing[transaction.CarrierCode][transaction.PackageSize];
